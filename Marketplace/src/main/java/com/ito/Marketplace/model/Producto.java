@@ -1,14 +1,12 @@
 package com.ito.Marketplace.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+//import lombok.*;
 import java.time.LocalDate;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "producto")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Producto {
 
     @Id
@@ -21,14 +19,16 @@ public class Producto {
 
     private String categoria;
 
+    @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @Column(nullable = false)
-    private Double precio;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precio;
 
     @Column(nullable = false)
-    private Boolean disponibilidad;
+    private Boolean disponibilidad = true;
 
+    @Column(columnDefinition = "TEXT")
     private String imagen;
 
     @Column(name = "fecha_publicacion")
@@ -38,4 +38,93 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name = "id_vendedor", nullable = false)
     private Usuario vendedor;
+
+
+    //contructores
+    public Producto(String nombre, String categoria, String descripcion, Double precio, Boolean disponibilidad, String imagen, LocalDate fechaPublicacion, Usuario vendedor) {
+        this.nombre = nombre;
+        this.categoria = categoria;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.disponibilidad = disponibilidad;
+        this.imagen = imagen;
+        this.fechaPublicacion = fechaPublicacion;
+        this.vendedor = vendedor;
+    }
+
+    public Producto() {
+    }
+
+    //getters y setters
+    public Long getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(Long idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+
+    public Boolean getDisponibilidad() {
+        return disponibilidad;
+    }
+
+    public void setDisponibilidad(Boolean disponibilidad) {
+        this.disponibilidad = disponibilidad;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
+    public LocalDate getFechaPublicacion() {
+        return fechaPublicacion;
+    }
+
+    public void setFechaPublicacion(LocalDate fechaPublicacion) {
+        this.fechaPublicacion = fechaPublicacion;
+    }
+
+    public Usuario getVendedor() {
+        return vendedor;
+    }
+
+    public void setVendedor(Usuario vendedor) {
+        this.vendedor = vendedor;
+    }
 }
