@@ -34,6 +34,9 @@ public class Producto {
     @Column(name = "fecha_publicacion")
     private LocalDate fechaPublicacion;
 
+    @Column(nullable = false)
+    private Integer stock;
+
     // Relación: muchos productos -> un usuario (vendedor)
     @ManyToOne
     @JoinColumn(name = "id_vendedor", nullable = false)
@@ -41,7 +44,10 @@ public class Producto {
 
 
     //contructores
-    public Producto(String nombre, String categoria, String descripcion, Double precio, Boolean disponibilidad, String imagen, LocalDate fechaPublicacion, Usuario vendedor) {
+    public Producto() {
+    }
+
+    public Producto(String nombre, String categoria, String descripcion, BigDecimal precio, Boolean disponibilidad, String imagen, LocalDate fechaPublicacion, Integer stock, Usuario vendedor) {
         this.nombre = nombre;
         this.categoria = categoria;
         this.descripcion = descripcion;
@@ -49,10 +55,8 @@ public class Producto {
         this.disponibilidad = disponibilidad;
         this.imagen = imagen;
         this.fechaPublicacion = fechaPublicacion;
+        this.stock = stock;
         this.vendedor = vendedor;
-    }
-
-    public Producto() {
     }
 
     //getters y setters
@@ -126,5 +130,13 @@ public class Producto {
 
     public void setVendedor(Usuario vendedor) {
         this.vendedor = vendedor;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 }
