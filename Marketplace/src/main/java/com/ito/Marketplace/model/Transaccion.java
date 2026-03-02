@@ -29,15 +29,19 @@ public class Transaccion {
     @Column(name = "estado_pedido", nullable = false)
     private EstadoPedido estadoPedido;
 
+    @Column(nullable = false)
+    private Integer cantidad;
+
     // constructor vacío
     public Transaccion() {}
 
-    public Transaccion(Producto producto, Usuario comprador, String metodoPago, LocalDateTime fechaCompra, EstadoPedido estadoPedido) {
+    public Transaccion(Producto producto, Usuario comprador, String metodoPago, LocalDateTime fechaCompra, EstadoPedido estadoPedido, Integer cantidad) {
         this.producto = producto;
         this.comprador = comprador;
         this.metodoPago = metodoPago;
         this.fechaCompra = fechaCompra;
         this.estadoPedido = estadoPedido;
+        this.cantidad = cantidad;
     }
 
     // getters y setters...
@@ -88,5 +92,13 @@ public class Transaccion {
 
     public void setEstadoPedido(EstadoPedido estadoPedido) {
         this.estadoPedido = estadoPedido;
+    }
+
+    public Integer getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
     }
 }

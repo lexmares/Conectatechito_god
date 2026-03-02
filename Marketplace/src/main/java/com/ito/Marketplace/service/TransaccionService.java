@@ -6,6 +6,7 @@ import com.ito.Marketplace.model.Transaccion;
 import com.ito.Marketplace.repository.ProductoRepository;
 import com.ito.Marketplace.repository.TransaccionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,24 +23,28 @@ public class TransaccionService {
         this.productoRepository = productoRepository;
     }
 
+    @Transactional
     public Transaccion crearTransaccion(Transaccion transaccion) {
 
-        Producto producto = productoRepository.findById(
+        Producto producto = productoRepository.findByIdForUpdate(
                 transaccion.getProducto().getIdProducto()
         ).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        if (producto.getStock() <= 0) {
-            throw new RuntimeException("Producto sin stock disponible");
-        }
-
         if (producto.getVendedor().getIdUsuario()
                 .equals(transaccion.getComprador().getIdUsuario())) {
-            // evita que el usuario se compre un producto a si mismo
             throw new RuntimeException("No puedes comprar tu propio producto");
         }
 
-        // Restar 1 unidad
-        producto.setStock(producto.getStock() - 1);
+        if (transaccion.getCantidad() <= 0) {
+            throw new RuntimeException("Cantidad inválida");
+        }
+
+        if (producto.getStock() < transaccion.getCantidad()) {
+            throw new RuntimeException("Stock insuficiente");
+        }
+
+        // Restar cantidad comprada
+        producto.setStock(producto.getStock() - transaccion.getCantidad());
 
         if (producto.getStock() == 0) {
             producto.setDisponibilidad(false);
@@ -52,6 +57,7 @@ public class TransaccionService {
 
         return transaccionRepository.save(transaccion);
     }
+
     public Transaccion cancelarTransaccion(Long idTransaccion) {
 
         Transaccion transaccion = transaccionRepository.findById(idTransaccion)
@@ -67,8 +73,8 @@ public class TransaccionService {
 
         Producto producto = transaccion.getProducto();
 
-        // Devolver 1 unidad
-        producto.setStock(producto.getStock() + 1);
+        // Devolver unidad(es)
+        producto.setStock(producto.getStock() + transaccion.getCantidad());
 
         if (producto.getStock() > 0) {
             producto.setDisponibilidad(true);
