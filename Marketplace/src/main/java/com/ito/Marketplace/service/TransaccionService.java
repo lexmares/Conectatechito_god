@@ -32,6 +32,12 @@ public class TransaccionService {
             throw new RuntimeException("Producto sin stock disponible");
         }
 
+        if (producto.getVendedor().getIdUsuario()
+                .equals(transaccion.getComprador().getIdUsuario())) {
+            // evita que el usuario se compre un producto a si mismo
+            throw new RuntimeException("No puedes comprar tu propio producto");
+        }
+
         // Restar 1 unidad
         producto.setStock(producto.getStock() - 1);
 
@@ -46,6 +52,35 @@ public class TransaccionService {
 
         return transaccionRepository.save(transaccion);
     }
+    public Transaccion cancelarTransaccion(Long idTransaccion) {
+
+        Transaccion transaccion = transaccionRepository.findById(idTransaccion)
+                .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
+
+        if (transaccion.getEstadoPedido() == EstadoPedido.entregado) {
+            throw new RuntimeException("No se puede cancelar una transacción entregada");
+        }
+
+        if (transaccion.getEstadoPedido() == EstadoPedido.cancelado) {
+            throw new RuntimeException("La transacción ya está cancelada");
+        }
+
+        Producto producto = transaccion.getProducto();
+
+        // Devolver 1 unidad
+        producto.setStock(producto.getStock() + 1);
+
+        if (producto.getStock() > 0) {
+            producto.setDisponibilidad(true);
+        }
+
+        productoRepository.save(producto);
+
+        transaccion.setEstadoPedido(EstadoPedido.cancelado);
+
+        return transaccionRepository.save(transaccion);
+    }
+
 
     public List<Transaccion> obtenerComprasPorUsuario(Long idUsuario) {
         return transaccionRepository.findByComprador_IdUsuario(idUsuario);

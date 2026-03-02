@@ -27,4 +27,9 @@ public class TransaccionController {
     public List<Transaccion> obtenerCompras(@PathVariable Long id) {
         return transaccionService.obtenerComprasPorUsuario(id);
     }
+    // Cancelacion de pedido
+    @PutMapping("/cancelar/{id}")
+    public Transaccion cancelarTransaccion(@PathVariable Long id) {
+        return transaccionService.cancelarTransaccion(id);
+    }
 }
