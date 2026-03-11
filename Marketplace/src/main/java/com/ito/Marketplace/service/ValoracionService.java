@@ -22,7 +22,6 @@ public class ValoracionService {
     }
 
     public Valoracion crearValoracion(Long idTransaccion, Valoracion valoracion) {
-
         Transaccion transaccion = transaccionRepository.findById(idTransaccion)
                 .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
 
@@ -30,15 +29,13 @@ public class ValoracionService {
             throw new RuntimeException("Solo se puede valorar una compra entregada");
         }
 
-        if (!transaccion.getComprador().getIdUsuario()
-                .equals(valoracion.getUsuario().getIdUsuario())) {
-            throw new RuntimeException("Solo el comprador puede valorar");
-        }
-
+        // Asignar comprador y producto directamente desde la transacción
+        valoracion.setUsuario(transaccion.getComprador());
         valoracion.setProducto(transaccion.getProducto());
 
         return valoracionRepository.save(valoracion);
     }
+
 
     public List<Valoracion> obtenerPorProducto(Long idProducto) {
         return valoracionRepository.findByProducto_IdProducto(idProducto);

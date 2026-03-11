@@ -4,6 +4,8 @@ import com.ito.Marketplace.model.Entrega;
 import com.ito.Marketplace.service.EntregaService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/entregas")
 public class EntregaController {
@@ -29,4 +31,23 @@ public class EntregaController {
     public Entrega confirmarComprador(@PathVariable Long idTransaccion) {
         return entregaService.confirmarComprador(idTransaccion);
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "Funciona";
+    }
+
+    @GetMapping
+    public List<Entrega> obtenerEntregas() {
+        return entregaService.obtenerTodas();
+    }
+
+    @GetMapping("/{idTransaccion}")
+    public Entrega obtenerPorTransaccion(@PathVariable Long idTransaccion) {
+        return entregaService.obtenerPorTransaccion(idTransaccion);
+    }
+
+
+
+
 }

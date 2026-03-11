@@ -6,6 +6,7 @@ import com.ito.Marketplace.repository.EntregaRepository;
 import com.ito.Marketplace.repository.TransaccionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,4 +50,15 @@ public class EntregaService {
 
         return entregaRepository.save(entrega);
     }
+    public List<Entrega> obtenerTodas() {
+        return entregaRepository.findAll();
+    }
+
+    public Entrega obtenerPorTransaccion(Long idTransaccion) {
+        return entregaRepository
+                .findByTransaccion_IdTransaccion(idTransaccion)
+                .orElseThrow(() -> new RuntimeException("Entrega no encontrada"));
+    }
+
+
 }

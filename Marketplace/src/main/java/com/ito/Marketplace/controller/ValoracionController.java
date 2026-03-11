@@ -16,11 +16,12 @@ public class ValoracionController {
         this.valoracionService = valoracionService;
     }
 
-    @PostMapping("/{idTransaccion}")
+    @PostMapping("/transaccion/{idTransaccion}")
     public Valoracion crearValoracion(@PathVariable Long idTransaccion,
                                       @RequestBody Valoracion valoracion) {
         return valoracionService.crearValoracion(idTransaccion, valoracion);
     }
+
 
     @GetMapping("/producto/{idProducto}")
     public List<Valoracion> obtenerPorProducto(@PathVariable Long idProducto) {

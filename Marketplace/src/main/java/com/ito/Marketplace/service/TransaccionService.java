@@ -91,4 +91,8 @@ public class TransaccionService {
     public List<Transaccion> obtenerComprasPorUsuario(Long idUsuario) {
         return transaccionRepository.findByComprador_IdUsuario(idUsuario);
     }
+
+
+
+
 }
