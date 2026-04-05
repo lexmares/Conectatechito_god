@@ -20,13 +20,17 @@ public class Entrega {
 
     private LocalDateTime fechaHora;
 
+    @Column(nullable = false)
     private Boolean confirmacionVendedor = false;
 
+    @Column(nullable = false)
     private Boolean confirmacionComprador = false;
 
-    public Entrega() {}
+    public Entrega() {
+    }
 
-    public Entrega(Transaccion transaccion, String puntoEncuentro, LocalDateTime fechaHora, Boolean confirmacionVendedor, Boolean confirmacionComprador) {
+    public Entrega(Transaccion transaccion, String puntoEncuentro, LocalDateTime fechaHora,
+            Boolean confirmacionVendedor, Boolean confirmacionComprador) {
         this.transaccion = transaccion;
         this.puntoEncuentro = puntoEncuentro;
         this.fechaHora = fechaHora;
@@ -35,7 +39,6 @@ public class Entrega {
     }
 
     // getters y setters
-
 
     public Long getIdEntrega() {
         return idEntrega;

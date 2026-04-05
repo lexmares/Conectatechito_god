@@ -19,7 +19,7 @@ public class EntregaService {
     private final TransaccionRepository transaccionRepository;
 
     public EntregaService(EntregaRepository entregaRepository,
-                          TransaccionRepository transaccionRepository) {
+            TransaccionRepository transaccionRepository) {
         this.entregaRepository = entregaRepository;
         this.transaccionRepository = transaccionRepository;
     }
@@ -27,11 +27,13 @@ public class EntregaService {
     public Entrega crearEntrega(Long idTransaccion, Entrega entrega) {
         // Verificar si la transacción existe
         Transaccion transaccion = transaccionRepository.findById(idTransaccion)
-                .orElseThrow(() -> new ResourceNotFoundException("Transacción con ID " + idTransaccion + " no encontrada"));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Transacción con ID " + idTransaccion + " no encontrada"));
 
         // Regla: Una transacción solo puede tener una entrega
         entregaRepository.findByTransaccion_IdTransaccion(idTransaccion).ifPresent(e -> {
-            throw new ResourceConflictException("La transacción " + idTransaccion + " ya tiene una entrega programada.");
+            throw new ResourceConflictException(
+                    "La transacción " + idTransaccion + " ya tiene una entrega programada.");
         });
 
         entrega.setTransaccion(transaccion);
@@ -41,12 +43,13 @@ public class EntregaService {
     @Transactional
     public Entrega confirmarVendedor(Long idTransaccion) {
         Entrega entrega = entregaRepository.findByTransaccion_IdTransaccion(idTransaccion)
-                .orElseThrow(() -> new ResourceNotFoundException("Entrega para la transacción " + idTransaccion + " no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Entrega para la transacción " + idTransaccion + " no encontrada"));
 
         entrega.setConfirmacionVendedor(true);
 
         // Si el comprador ya confirmó, marcar transacción como entregada
-        if (entrega.getConfirmacionComprador()) {
+        if (Boolean.TRUE.equals(entrega.getConfirmacionComprador())) {
             actualizarTransaccionEntregada(entrega.getTransaccion());
         }
 
@@ -56,12 +59,13 @@ public class EntregaService {
     @Transactional
     public Entrega confirmarComprador(Long idTransaccion) {
         Entrega entrega = entregaRepository.findByTransaccion_IdTransaccion(idTransaccion)
-                .orElseThrow(() -> new ResourceNotFoundException("Entrega para la transacción " + idTransaccion + " no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Entrega para la transacción " + idTransaccion + " no encontrada"));
 
         entrega.setConfirmacionComprador(true);
 
         // Si el vendedor ya confirmó, marcar transacción como entregada
-        if (entrega.getConfirmacionVendedor()) {
+        if (Boolean.TRUE.equals(entrega.getConfirmacionVendedor())) {
             actualizarTransaccionEntregada(entrega.getTransaccion());
         }
 
@@ -80,6 +84,7 @@ public class EntregaService {
     public Entrega obtenerPorTransaccion(Long idTransaccion) {
         return entregaRepository
                 .findByTransaccion_IdTransaccion(idTransaccion)
-                .orElseThrow(() -> new ResourceNotFoundException("No se encontró una entrega para la transacción " + idTransaccion));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No se encontró una entrega para la transacción " + idTransaccion));
     }
 }
