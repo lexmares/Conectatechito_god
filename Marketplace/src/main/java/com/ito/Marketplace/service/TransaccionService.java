@@ -5,8 +5,10 @@ import com.ito.Marketplace.exception.BadRequestException;
 import com.ito.Marketplace.exception.ResourceNotFoundException;
 import com.ito.Marketplace.model.Producto;
 import com.ito.Marketplace.model.Transaccion;
+import com.ito.Marketplace.model.Usuario;
 import com.ito.Marketplace.repository.ProductoRepository;
 import com.ito.Marketplace.repository.TransaccionRepository;
+import com.ito.Marketplace.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +20,14 @@ public class TransaccionService {
 
     private final TransaccionRepository transaccionRepository;
     private final ProductoRepository productoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public TransaccionService(TransaccionRepository transaccionRepository,
-            ProductoRepository productoRepository) {
+            ProductoRepository productoRepository,
+            UsuarioRepository usuarioRepository) {
         this.transaccionRepository = transaccionRepository;
         this.productoRepository = productoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Transactional
@@ -53,8 +58,13 @@ public class TransaccionService {
             producto.setDisponibilidad(false);
         }
 
-        productoRepository.save(producto);
+        // Cargar el comprador completo para que no devuelva nulos en el JSON
+        Usuario compradorCompleto = usuarioRepository.findById(transaccion.getComprador().getIdUsuario())
+                .orElseThrow(() -> new ResourceNotFoundException("Comprador no encontrado"));
 
+        // Asignar los objetos completos a la transacción
+        transaccion.setProducto(producto);
+        transaccion.setComprador(compradorCompleto);
         transaccion.setEstadoPedido(EstadoPedido.pagado);
         transaccion.setFechaCompra(LocalDateTime.now());
 

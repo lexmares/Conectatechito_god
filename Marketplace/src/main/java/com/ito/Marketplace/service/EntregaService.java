@@ -37,6 +37,8 @@ public class EntregaService {
         });
 
         entrega.setTransaccion(transaccion);
+        entrega.setConfirmacionVendedor(false); // Asegurar valor inicial no nulo
+        entrega.setConfirmacionComprador(false); // Asegurar valor inicial no nulo
         return entregaRepository.save(entrega);
     }
 
