@@ -1,5 +1,6 @@
 package com.ito.Marketplace.service;
 
+import com.ito.Marketplace.exception.ResourceNotFoundException;
 import com.ito.Marketplace.model.Producto;
 import com.ito.Marketplace.model.Usuario;
 import com.ito.Marketplace.repository.ProductoRepository;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @Service
 public class ProductoService {
     private final ProductoRepository productoRepository;
@@ -20,9 +22,8 @@ public class ProductoService {
     }
 
     public Producto crearProducto(Producto producto, Long idVendedor) {
-
         Usuario vendedor = usuarioRepository.findById(idVendedor)
-                .orElseThrow(() -> new RuntimeException("Vendedor no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Vendedor con ID " + idVendedor + " no encontrado"));
 
         producto.setVendedor(vendedor);
 

@@ -1,7 +1,6 @@
 package com.ito.Marketplace.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "usuario")
@@ -20,7 +19,6 @@ public class Usuario {
     @Column(name = "matricula", nullable = false, unique = true)
     private String matricula;
 
-    @Getter
     @Column(name = "correo_institucional",nullable = false, unique = true)
     private String correoInstitucional;
 

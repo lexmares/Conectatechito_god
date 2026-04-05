@@ -1,6 +1,8 @@
 package com.ito.Marketplace.service;
 
 import com.ito.Marketplace.enums.EstadoPedido;
+import com.ito.Marketplace.exception.BadRequestException;
+import com.ito.Marketplace.exception.ResourceNotFoundException;
 import com.ito.Marketplace.model.Producto;
 import com.ito.Marketplace.model.Transaccion;
 import com.ito.Marketplace.repository.ProductoRepository;
@@ -18,7 +20,7 @@ public class TransaccionService {
     private final ProductoRepository productoRepository;
 
     public TransaccionService(TransaccionRepository transaccionRepository,
-                              ProductoRepository productoRepository) {
+            ProductoRepository productoRepository) {
         this.transaccionRepository = transaccionRepository;
         this.productoRepository = productoRepository;
     }
@@ -27,20 +29,21 @@ public class TransaccionService {
     public Transaccion crearTransaccion(Transaccion transaccion) {
 
         Producto producto = productoRepository.findByIdForUpdate(
-                transaccion.getProducto().getIdProducto()
-        ).orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+                transaccion.getProducto().getIdProducto())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Producto con ID " + transaccion.getProducto().getIdProducto() + " no encontrado"));
 
         if (producto.getVendedor().getIdUsuario()
                 .equals(transaccion.getComprador().getIdUsuario())) {
-            throw new RuntimeException("No puedes comprar tu propio producto");
+            throw new BadRequestException("No puedes comprar tu propio producto.");
         }
 
         if (transaccion.getCantidad() <= 0) {
-            throw new RuntimeException("Cantidad inválida");
+            throw new BadRequestException("La cantidad debe ser mayor a cero.");
         }
 
         if (producto.getStock() < transaccion.getCantidad()) {
-            throw new RuntimeException("Stock insuficiente");
+            throw new BadRequestException("Stock insuficiente. Disponible: " + producto.getStock());
         }
 
         // Restar cantidad comprada
@@ -61,14 +64,15 @@ public class TransaccionService {
     public Transaccion cancelarTransaccion(Long idTransaccion) {
 
         Transaccion transaccion = transaccionRepository.findById(idTransaccion)
-                .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Transacción con ID " + idTransaccion + " no encontrada"));
 
         if (transaccion.getEstadoPedido() == EstadoPedido.entregado) {
-            throw new RuntimeException("No se puede cancelar una transacción entregada");
+            throw new BadRequestException("No se puede cancelar una transacción ya entregada.");
         }
 
         if (transaccion.getEstadoPedido() == EstadoPedido.cancelado) {
-            throw new RuntimeException("La transacción ya está cancelada");
+            throw new BadRequestException("La transacción ya se encuentra cancelada.");
         }
 
         Producto producto = transaccion.getProducto();
@@ -86,7 +90,6 @@ public class TransaccionService {
 
         return transaccionRepository.save(transaccion);
     }
-
 
     public List<Transaccion> obtenerComprasPorUsuario(Long idUsuario) {
         return transaccionRepository.findByComprador_IdUsuario(idUsuario);

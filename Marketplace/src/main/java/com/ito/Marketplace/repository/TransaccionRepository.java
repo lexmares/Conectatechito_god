@@ -8,4 +8,5 @@ public interface TransaccionRepository extends JpaRepository<Transaccion, Long> 
 
     List<Transaccion> findByComprador_IdUsuario(Long idUsuario);
 
+
 }

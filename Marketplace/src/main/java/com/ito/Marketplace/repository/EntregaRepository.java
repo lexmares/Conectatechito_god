@@ -9,4 +9,6 @@ public interface EntregaRepository extends JpaRepository<Entrega, Long> {
 
     Optional<Entrega> findByTransaccion_IdTransaccion(Long idTransaccion);
 
+
+
 }
