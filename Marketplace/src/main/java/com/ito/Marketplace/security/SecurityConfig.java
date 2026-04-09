@@ -27,10 +27,14 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register").permitAll()
                         .anyRequest().authenticated()
                 )
+                .formLogin(form -> form.disable())
+                .logout(logout -> logout.disable())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
